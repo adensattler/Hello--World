@@ -1,0 +1,18 @@
+https://www.youtube.com/watch?v=eiC58R16hb8 
+
+EVENT LOOP FLOW
+1.  Start executing synchronous code on the call stack.
+2.  If code initiating an asynchronous task is encountered, 
+    it will either be handled by the JavaScript engine (e.g., Promises) 
+    or passed off to the Web API (e.g., timers, I/O). 
+    The callback from either is placed in the appropriate queue:
+        - Microtask Queue for .then() .catch() .finally(), queueMicroTask(), function body following AWAIT, or mutation observers.
+        - Callback Queue for other asynchronous events like timers.
+3.  Process ALL microtasks if stack is empty.
+4.  Execute the first element in the task queue.
+
+
+EVENT LOOP ORDER OF OPERATIONS
+1. Execute all syncronous code until the callstack is empty.
+2. Execute all microtasks in microtask queue until empty
+3. Pop a task off of the task queue and move it to the callstack to execute

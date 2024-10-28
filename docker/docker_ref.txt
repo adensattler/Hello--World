@@ -1,0 +1,111 @@
+DOCKER 🐳
+Dockerfile -> Image -> Container
+
+
+STEP 1: Make a Dockerfile
+
+STEP 2: Build the Image
+$ docker build -t name:tag . (or location of the Dockerfile)
+
+STEP 3: Run the Image as a Container
+docker run -d -p HOST_PORT:CONTAINER_PORT image-name
+
+
+
+# Docker Commands Cheatsheet
+
+## Container Management
+docker ps                     # List running containers
+docker ps -a                  # List all containers (including stopped ones)
+docker start <container>      # Start a stopped container
+docker stop <container>       # Stop a running container(s)
+docker rm <container>         # Remove a container(s)
+docker stop $(docker ps -q)   # Stop all running containers
+docker rm $(docker ps -a -q)  # Remove all containers
+docker container prune        # Remove all STOPPED containers
+
+
+## Image Management
+docker images                 # List all Docker images
+docker pull <image>           # Pull an image from a repository
+docker rmi <image>            # Remove an image
+docker rmi $(docker images -q) # Remove all Docker images
+docker image prune            # Removes dangling images (images that are not tagged or associated with any container).
+
+## Build and Run
+docker build -t <name> .      # Build a Docker image from a Dockerfile
+docker run <image>            # Run a container from an image
+docker run -d -p HOST_PORT:CONTAINER_PORT <IMAGE>
+
+## Cleanup Commands
+docker system prune           # Remove unused containers, networks, and dangling images
+docker system prune -a        # Remove all unused containers, images, volumes, and networks
+
+
+
+
+
+PORT BINDING/MAPPING IN DOCKER
+========================================================
+Your Container/App runs on a specific port (this port is determined in your app code 
+where you set the server to run on port 3000, 5000, 8080, or any other port)
+
+example: 
+const port = process.env.PORT || 8080;
+app.listen(port, function () {
+    console.log('Server is running on http://localhost:${port}');
+});
+
+OR
+
+port = int(getenv("PORT", 5001))
+app.run(host='0.0.0.0', port=port)
+
+THIS IS THE PORT YOUR CONTAINER IS RUNNING ON
+
+NOTE: Your containerized app runs in an ISOLATED Docker network. You need to PUBLISH a port in order for it to be accessible!
+
+
+
+
+PUBLISH
+--------------------------------------------------------
+Creates a bridge between then isolated environment of your container to the outside world.
+Links a specific port on the container to a specific port on the host machine.
+This is what makes a container's services available outside of the container.
+
+*** if your container runs a web server and you want users to access it, you'll need to publish its port
+
+Use `docker run ` with the --publish or -p flag.
+
+
+PORT FORWARDING
+--------------------------------------------------------
+docker run -d -p HOST_PORT:CONTAINER_PORT image-name
+ex: docker run -p 5000:8080 flask-app
+
+RUN WITH ENV VARS
+docker run --env-file .env -p 5000:8080 image-name
+
+HOST_PORT: The port number on your host machine where you want to receive traffic
+CONTAINER_PORT: The port number within the container that's listening for connections
+
+
+
+EXPOSE
+--------------------------------------------------------
+You expose ports using the EXPOSE keyword in the Dockerfile or the --expose flag to docker run.
+The EXPOSE instruction does NOT actually publish the port (make it accessible to the host). 
+It functions as a type of documentation between the person who builds the image 
+and the person who runs the container, about which ports are intended to be published. 
+Exposing ports is optional. Also used for inter-container communication.
+
+TLDR; Specifies which ports the application uses. 
+Unless you are running multiple containers this IS NOT NECESSARY.
+
+
+
+
+
+
+

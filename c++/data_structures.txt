@@ -1,0 +1,323 @@
+
+1. Arrays: 
+FIXED SIZE ARRAY
+    - Type: Fixed-size, can be either C-style (int arr[10];) or std::array.
+    - Size: Known at compile time, cannot change.
+    - Performance: Fast access (O(1)) due to contiguous memory, no overhead.
+    - Use When: You know the size in advance, need fast access, and don't need to resize.
+
+    C-style array initialization
+    int arr[5];               // Uninitialized array of size 5
+    int arr[5] = {1, 2, 3};   // First 3 elements are initialized, rest are 0
+    int arr[5] = {0};         // All elements initialized to 0
+    int arr[] = {1, 2, 3, 4}; // Compiler infers size, initializes with given values
+
+    std::array Initialization (C++11 and later)
+    std::array<int, 5> arr;                    // Uninitialized array of size 5
+    std::array<int, 5> arr = {1, 2, 3};        // First 3 elements are initialized, rest are 0
+    std::array<int, 5> arr = {0};              // All elements initialized to 0
+    std::array<int, 3> arr = {{1, 2, 3}};      // Another way to initialize all elements
+
+
+3. Vector: 
+DYNAMIC ARRAY
+    - Type: Dynamic array. (std::vector)
+    - Size: Resizable, grows dynamically as elements are added.
+    - Performance: O(1) random access, O(n) insertion/removal (but O(1) amortized for appending at the end).
+    - Use When: You need dynamic resizing and fast random access.
+
+    INITIALIZATION
+    std::vector<int> vec;        // Empty vector with size 0
+    std::vector<int> vec(5);     // Vector of size 5, all elements initialized to 0
+    std::vector<int> vec(5, 10); // Vector of size 5, all elements initialized to 10
+    std::vector<int> vec = {1, 2, 3, 4};  // Vector initialized with these values
+
+    Copy from another vector
+    std::vector<int> vec1 = {1, 2, 3};
+    std::vector<int> vec2(vec1);          // vec2 is a copy of vec1
+
+    Using a range from another container
+    std::vector<int> vec1 = {1, 2, 3, 4, 5};
+    std::vector<int> vec2(vec1.begin(), vec1.begin() + 3); // vec2 = {1, 2, 3}
+
+
+4. List: 
+DOUBLY LINKED LIST (std::list)
+    Type: Container (std::list)
+    Size: Dynamic
+    Performance: O(1) insertion and removal at any position (given an iterator), O(n) for random access
+    Use When: You need frequent insertions and deletions at arbitrary positions
+
+    INITIALIZATION AND USAGE
+    #include <list>
+
+    std::list<int> lst; // Empty list
+    std::list<int> lst = {1, 2, 3, 4, 5}; // Initialized with values
+    std::list<int> lst(5, 10); // List with 5 elements, all initialized to 10
+
+    // Basic operations
+    lst.push_back(6); // Add to end
+    lst.push_front(0); // Add to beginning
+    lst.pop_back(); // Remove from end
+    lst.pop_front(); // Remove from beginning
+
+    // Insertion and removal at arbitrary positions
+    auto it = std::find(lst.begin(), lst.end(), 3);
+    if (it != lst.end()) {
+        lst.insert(it, 100); // Insert 100 before 3
+        lst.erase(it); // Remove 3
+    }
+
+    // Traversal
+    for (const auto& elem : lst) {
+        std::cout << elem << " ";
+    }
+
+    // Size and emptiness
+    size_t size = lst.size();
+    bool is_empty = lst.empty();
+
+
+
+    std::list<int> lst1 = {1, 2, 3};
+    std::list<int> lst2 = {4, 5, 6};
+
+    // Move all elements from lst2 to the end of lst1
+    lst1.splice(lst1.end(), lst2);
+    // Now lst1 = {1, 2, 3, 4, 5, 6}, lst2 is empty
+
+    // Move a single element from one position to another
+    auto it = std::next(lst1.begin(), 3); // Points to 4
+    lst1.splice(lst1.begin(), lst1, it); // Move 4 to the beginning
+    // Now lst1 = {4, 1, 2, 3, 5, 6}
+
+
+5. Priority Queue
+    HEAP-BASED PRIORITY QUEUE
+
+    Type: Container adapter (std::priority_queue)
+    Underlying Container: Usually std::vector
+    Size: Dynamic
+    Performance: O(log n) insertion and removal, O(1) access to the top element
+    Use When: You need to efficiently maintain a collection of elements ordered by priority
+
+    INITIALIZATION AND USAGE
+    #include <queue>
+
+    // Max heap (default)
+    std::priority_queue<int> pq;
+
+    // Min heap
+    std::priority_queue<int, std::vector<int>, std::greater<int>> min_pq;
+
+    // Initializing with elements
+    std::priority_queue<int> pq({3, 1, 4, 1, 5, 9});
+
+    // Basic operations
+    pq.push(2); // Add element
+    int top = pq.top(); // Access top element (highest priority)
+    pq.pop(); // Remove top element
+
+    // Size and emptiness
+    size_t size = pq.size();
+    bool is_empty = pq.empty();
+
+
+6. Deque 
+(std::deque)
+
+    Type: Double-ended queue.
+    Size: Dynamically resizable.
+    Performance: O(1) insertion/removal at both ends, O(1) random access (like vector), but resizing is more efficient.
+    Use When: You need fast insertion/removal at both ends along with random access.
+    Note: Can be thought of as a combination of a vector and a list.
+
+    # USAGE // INITIALIZATION
+    std::deque<int> dq = {10, 20, 30};
+    dq.push_back(40);  // Inserts 40 at the end
+    dq.push_front(5);  // Inserts 5 at the front
+    dq[1];  // Access the second element (20)
+    dq.pop_back();  // Removes the last element (40)
+    dq.pop_front(); // Removes the first element (5)
+
+
+7. Unordered Set:
+HASH SET (std::unordered_set)
+    Type: Unordered set implemented as a hash table (std::unordered_set)
+    Underlying structure: Hash table
+    Performance: Average O(1) for insertion, deletion, and lookup; worst-case O(n) if many collisions
+    Use When: You need fast lookups and don't care about element order or duplicates
+
+    The following methods apply to both unordered_set and set:
+        .insert(): add an element to the set.
+        .erase(): removes an element from the set.
+        .count(): check whether an element exists in the set.
+        .size(): return the size of the set.
+	    .find()
+
+    INITIALIZATION
+    unordered_set<int> s;                         // Empty unordered_set
+    unordered_set<int> s = {1, 2, 3, 4};          // Initialized with specified values
+
+    vector<int> nums = {1, 2, 2, 3, 4};
+    unordered_set<int> s(nums.begin(), nums.end());  // Initialized with unique elements from vector aka Range initialization (Iterators)
+
+    // Copy constructor
+    unordered_set<int> s1 = {1, 2, 3};
+    unordered_set<int> s2(s1);                    // Copy initialization
+
+    Basic Usage Example:
+    set<int> s = {1, 2, 3, 4};
+    unordered_set<int>s(nums.begin(), nums.end());
+
+    s.insert(5);  // Inserts 5
+    s.erase(3);   // Removes 3
+    #include <unordered_set>
+    std::unordered_set<int> uset;
+    uset.insert(5);
+    uset.insert(3);
+
+    // Initialize with a list of elements
+    std::unordered_set<int> uset = {1, 2, 3, 4, 5};
+
+    // Insert
+    uset.insert(6);
+
+    // Check if element exists
+    bool exists = uset.find(2) != uset.end();  // Check if 2 exists in the set
+
+    // Iterate through the set
+    for (const auto& elem : uset) {
+        std::cout << elem << " ";
+    }
+
+    // Erase
+    uset.erase(3);
+
+    // Size and clear
+    size_t size = uset.size();
+    bool is_empty = uset.empty();
+    uset.clear();  // Remove all elements
+
+
+9. Unordered Map: 
+HASH MAP (std::unordered_map)
+    Type: Associative container storing key-value pairs, implemented as a HASH TABLE. 
+    Size: Dynamically resizable.
+    Performance: Average O(1) for insertion, deletion, and lookup; worst-case O(n) if many collisions
+    Use When: You need fast key-value lookups and don't need ordered data
+    Note: Keys must be unique. Use a custom hash function for user-defined types.
+
+    The following methods apply to both unordered_map and map:
+        .insert(): add an element to the map.
+        .erase(): removes an element from the map.
+        .count(): check whether an element exists in the map.
+        .size(): return the size of the map.
+        [] operater:
+        If the specified key matches an element in the map, then access the mapped value associated with that key.
+        If the specified key doesn’t match any element in the map, add a new element to the map with that key.
+
+    INITIALIZATION & USAGE:
+    #include <unordered_map>
+    std::unordered_map<std::string, int> umap;
+    umap["apple"] = 5;
+    umap["banana"] = 3;
+
+    // Initialize with a list of pairs
+    std::unordered_map<std::string, int> umap = {{"apple", 5}, {"banana", 3}};
+
+    // Insert
+    umap.insert({"orange", 2});
+    umap.insert(std::make_pair("grape", 4));
+
+    // Access and modify
+    int apple_count = umap["apple"];  // 5
+    umap["apple"] = 6;  // Update value
+
+    // Check if key exists
+    if (umap.find("pear") != umap.end()) {
+        std::cout << "Pear exists in the map" << std::endl;
+    }
+
+    // Iterate through the map
+    for (const auto& pair : umap) {
+        std::cout << pair.first << ": " << pair.second << std::endl;
+    }
+
+    // Erase
+    umap.erase("banana");
+
+    // Size and clear
+    size_t size = umap.size();
+    bool is_empty = umap.empty();
+    umap.clear();  // Remove all elements
+
+
+10. Stack (std::stack)
+
+    Stack Methods:
+        .push() add an element at the top of the stack.
+        .pop() remove the element at the top of the stack.
+    
+    INITIALIZATION & USAGE:
+    #include <stack>
+
+    std::stack<int> s;
+    s.push(1);
+    s.push(2);
+    s.push(3);
+
+    // Access top element
+    int top = s.top();  // 3
+
+    // Remove top element
+    s.pop();
+
+    // Check if empty and get size
+    bool is_empty = s.empty();
+    size_t size = s.size();
+
+    // Iterate (note: this empties the stack)
+    while (!s.empty()) {
+        std::cout << s.top() << " ";
+        s.pop();
+    }
+
+    // Using a different underlying container
+    std::stack<int, std::vector<int>> s_vec;
+
+
+11. Queue
+    Queue Methods
+        .push() add an element at the end of the queue.
+        .pop() remove the element at the front of the queue.
+
+    INITIALIZATION & USAGE:
+    #include <queue>
+
+    std::queue<int> q;
+    q.push(1);
+    q.push(2);
+    q.push(3);
+
+    // Access front and back elements
+    int front = q.front();  // 1
+    int back = q.back();    // 3
+
+    // Remove front element
+    q.pop();
+
+    // Check if empty and get size
+    bool is_empty = q.empty();
+    size_t size = q.size();
+
+    // Iterate (note: this empties the queue)
+    while (!q.empty()) {
+        std::cout << q.front() << " ";
+        q.pop();
+    }
+
+    // Using a different underlying container
+    std::queue<int, std::list<int>> q_list;
+
+

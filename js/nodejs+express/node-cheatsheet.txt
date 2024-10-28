@@ -1,0 +1,145 @@
+Steps to Start a Node.js Project
+
+1. Initialize a Node.js project:
+   - npm init -y     # Creates package.json with default settings
+
+2. Install necessary dependencies:
+   - npm install express dotenv      # Install Express.js (web framework) and dotenv for env vars
+   - npm install --save-dev nodemon  # Install Nodemon for auto-restarting the server (or -D) 
+   - npm install --save-dev @types/express  # Nice intellisense!
+
+
+3. Configure ES Modules in package.json:
+    -   "type": "module",       # Add this line (defaults to "commonjs")
+
+4. Configure scripts in package.json:
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "start": "node server",
+      "dev": "node --watch --env-file=.env server",     # uses built-ins to replace nodemon and dotenv packages respectively
+      "dev2": "nodemon server"
+    },
+
+5. Create project structure:
+    - touch server.js .env .gitignore
+    - mkdir src public
+
+6. Populate .gitignore
+    - fill with this template: https://github.com/github/gitignore/blob/main/Node.gitignore  
+
+
+
+
+
+Project Structure:
+my-node-project/
+│
+├── node_modules/          # Installed packages
+│
+├── public/                # Static files (e.g., images, CSS)
+│   └── ...                # Static assets
+│
+├── src/                   # Source code
+│   ├── controllers/       # Request handlers
+│   ├── models/            # Database models (e.g., for PostgreSQL)
+│   ├── routes/            # API route definitions
+│   ├── views/             # Templating files
+│   ├── middleware/        # Custom middleware
+│   ├── services/          # Business logic and services
+│   └── utils/             # Utility functions
+│
+├── config/                # Configuration files
+│   ├── default.json       # Default configuration
+│   └── production.json    # Production-specific configuration
+│
+├── tests/                 # Unit and integration tests
+│   └── ...                # Test files
+│
+├── .env                   # Environment variables
+├── .gitignore             # Git ignore file
+├── package.json           # Project metadata and dependencies
+├── package-lock.json      # Lockfile for dependencies
+└── server.js              # Main entry point for the application (or app.js)
+
+NOTE: there are project scaffolders like express-generator but i don't really like them...
+There are also many other ways to organize your project but this is the most logical to me!
+
+
+OTHER NOTES
+======================================
+
+Useful Links:
+-------------------------------------
+How to Create a Express/Node + React Project with Vite | Node Backend + React Frontend: https://www.youtube.com/watch?v=mKmxc8TcWQ8
+
+
+
+__dirname and __filename:
+These are variables that automatically exist when using Common JS but not with ES Modules!
+Theyre super helpful and you can create them if using ESM by adding the following:
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+
+
+
+PUBLIC vs STATIC Folder
+-------------------------------------
+They serve static files to clients.
+
+Both "public" and "static" folders serve the same purpose: 
+storing files that don't change dynamically (like images, CSS, JavaScript, etc.) 
+and that your server can directly deliver to the client.
+You can use any folder name you like. 
+
+
+
+Views Folder:
+-------------------------------------
+The views folder holds template files that generate HTML dynamically. These templates are typically written in a templating language like:
+    EJS (Embedded JavaScript) in Express/Node.js.
+    Pug (formerly Jade) in Express/Node.js.
+    Handlebars in Express/Node.js.
+    Jinja2 in Flask/Django (Python).
+
+Server-Side Rendering (SSR): 
+When you’re using server-side templating engines to generate HTML on the server before sending it to the browser. 
+This is different from client-side rendering (which you would do with React or Angular).
+
+Difference Between views and public
+views folder: Contains dynamic templates (like EJS, Pug, or Handlebars) that will be rendered on the server to generate HTML with dynamic content.
+public folder: Contains static files (like HTML, CSS, JavaScript, images) that are served directly to the client as-is, without any dynamic content generation.
+
+
+
+npm
+-------------------------------------
+npm (no capitals!) is a package manager 
+- a gigantic repository of plugins, libraries, and other tools, 
+which provides us with a command-line tool we can use to install these tools 
+(that we call “packages”) in our applications.
+
+--save-dev is used to save the package for development purpose. Example: unit tests, minification..
+--save is used to save the package required for the application to run.
+
+--save-dev installs and adds the entry to the package.json file devDependencies
+--no-save installs but does not add the entry to the package.json file dependencies
+--save-optional installs and adds the entry to the package.json file optionalDependencies
+--no-optional will prevent optional dependencies from being installed
+Shorthands of the flags can also be used:
+
+-S: --save
+-D: --save-dev
+-O: --save-optional
+
+
+
+main (package.json)
+Purpose of the main field:
+    It specifies the entry point of your package when it's used as a dependency in another project.
+    It tells Node.js which file to load when your package is required/imported.
+    If you're building a library or module that others will import, you should set main to point to your primary entry file.
+    If you're building an application that you run directly (not imported by other projects), the main field is less critical.
+    -   "main": "server.js"     # defaults to index.js so change if you want to! and adjust step below accordingly
+
+
+

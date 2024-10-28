@@ -1,0 +1,119 @@
+
+Handling Responses
+=====================================
+Common req (Request) Params and Methods:
+req.params
+Access route parameters (e.g., :id in /user/:id).
+
+req.query
+Access query string parameters (e.g., /search?q=nodejs → req.query.q).
+
+req.body
+Access data sent in the body of the request (for POST/PUT requests). Requires middleware like body-parser or express.json().
+
+req.method
+HTTP method of the request (e.g., GET, POST).
+
+req.url
+Full URL of the request (excluding the domain).
+
+req.path
+Path of the request (excludes query parameters).
+
+req.headers
+Access request headers (e.g., req.headers['content-type']).
+
+req.cookies
+Access cookies (requires cookie-parser middleware).
+
+req.ip
+Get the client's IP address.
+
+req.protocol
+Returns the request protocol (e.g., http, https).
+
+req.hostname
+Get the hostname from the request.
+
+req.get(headerName)
+Retrieves a specific header (e.g., req.get('Content-Type')).
+
+req.is(mimeType)
+Checks if the request's content type matches the given mime type (e.g., req.is('json')).
+
+
+
+
+
+Common res (Response) Methods:
+res.status(statusCode)
+Sets the HTTP status for the response (e.g., res.status(404)).
+
+res.send(body)
+Sends a response (string, object, or buffer).
+
+res.json(data)
+Sends a JSON response (sets Content-Type to application/json).
+
+res.sendFile(path)
+Sends a file as a response (requires absolute path).
+
+res.redirect(status, url)
+Redirects to a different URL (optional status, defaults to 302).
+
+res.render(view, { key: 'val' })
+Renders a SSR view template (e.g., using Pug, EJS) and sends the HTML response.
+
+res.cookie(name, value, options)
+Sets a cookie (requires cookie-parser middleware).
+
+res.clearCookie(name, options)
+Clears a cookie.
+
+res.set(field, value)
+Sets a response header (e.g., res.set('Content-Type', 'application/json')).
+
+res.type(type)
+Sets the Content-Type header (e.g., res.type('html')).
+
+res.format(object)
+Sends a response based on the Accept header (content negotiation).
+
+res.location(path)
+Sets the Location header.
+
+res.end([data])
+Ends the response process (can send optional data).
+
+res.append(field, value)
+Appends to an existing response header.
+
+res.status(error_code)
+Sets the HTTP status code of the response.  It doesn't send the response immediately but prepares the status code for when the response is eventually sent using other methods like res.send(), res.json(), or res.end().
+Example:
+res.status(404).send('Not Found');
+
+
+
+
+
+
+"CATCH-ALL" ROUTE HANDLER
+-------------------------
+app.use(...): This catches all HTTP methods (GET, POST, PUT, etc.) that aren't matched by earlier route handlers.
+Must come after all other routes but before error handlers
+
+app.use((req, res, next) => {
+  res.status(404).send('Page not found');
+});
+
+
+WILDCARD ROUTE HANDLING
+-------------------------
+app.get("*", ...) for wildcard handling
+This only catches GET requests. So if someone sends a POST or PUT request to an undefined route, 
+it won't trigger this handler. You'd need separate handlers for other HTTP methods (app.post("*", ...), etc.) to handle those.
+
+app.get("*", function (req, res) {
+    res.status(404).sendFile(path.join(__dirname, "public", '404.html'));
+});

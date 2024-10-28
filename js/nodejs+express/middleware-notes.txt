@@ -1,0 +1,327 @@
+
+MIDDLEWARE
+==========
+https://expressjs.com/en/guide/using-middleware.html 
+great video: https://www.youtube.com/watch?v=lY6icfhap2o 
+great article: https://medium.com/@viral_shah/express-middlewares-demystified-f0c2c37ea6a1 
+
+What is MIDDLEWARE?
+-------------------
+Logic (or functions if you like) that sits in between incoming http requests and the server's outgoing response! 
+ANYTHING that happens during this time is middleware!!!!
+Middleware functions are request handlers that allow you to intercept and manipulate REQUESTS and RESPONSES which is incredibly important.
+NEWSFLASH: YOUR ROUTES ARE MIDDLEWARE TOO!!!!! 
+They just dont have a `next` parameter because they are usually the last thing to run before we send out a response to the user.
+
+OFFICIAL DEFINITION: A function with signature func(req, res, next). 
+A Middleware usually runs some piece of code, optionally modifies the 
+request or response and at the end, either sends the response or calls the next Layer.
+
+
+Middleware functions are functions that take three arguments (sometimes 4 with err) (err, req, res, next):
+    req - The request object, representing the incoming HTTP request.
+    res - The response object, representing the HTTP response that will be sent back to the client.
+    next - The FUNCTION that passes control to the next middleware function in the chain!!!! This is semi optional.
+    *** next is a FUNCTION CALL ***
+
+
+
+WHAT IS NEXT?
+Well, to put it simply, it is used to pass control to the next middleware function in the application’s request-response cycle.
+
+Calling the next() function:
+We have the following arguments that we can pass to it:
+    1. No argument next() - Will pass control to the next middleware function. Very simple and straightforward.
+    2. With an error argument next(new Error(...)) - Will pass control directly to the error middleware function (if it exists).
+    3. With the string next('route') - Will pass control to the next route handler with the same matching path (if there is one). This only works for app.METHOD or router.METHOD. Potentially, it can also be the same as just calling next with no argument.
+    4. With the string next('router') - Will skip all middleware functions attached to the specific router instance and pass control back out of the router instance. Basically, we exit the router and go back to the parent router, e.g. app (yes, the Express app is also just a router under the hood).
+    5. Out of the four, we will likely only use the first two, unless we have a very specific need that requires the other two.
+
+
+
+There are all sorts of middleware functions!
+    1. Application-level middleware: middleware scoped to an express root instance.
+    2. Router-level middleware: middleware scoped to an express router instance.
+    3. Error-handling middleware: Functions that handle errors too (err, req, res, next).
+    4. Built-in Middleware: (e.g., express.json(), express.static(), express.urlencoded()).
+    5. Third-party Middleware: Libraries like body-parser, cors, etc.
+    6. Custom Middleware: Middleware functions you define yourself!
+
+
+
+Okay but how do I use them now?
+    1. router.use() GLOBAL MIDDLEWARE
+        - ex: app.use(express.static("."));
+        - This is the most common usage of middleware and most straight forward. 
+          Express applies this middleware to all incoming requests.
+
+    2. router.use("<route>" (optional), middleware_func) 
+        - ex: app.use("/users", logger);
+        - You can also specify a path to match incoming requests to middleware! 
+          In the above example the middleware_func only runs on /users routes!!
+
+    3. router.METHOD (e.g. app.get, app.post) functions  SINGLE ACTION
+        - app.get("/", logger_middleware, function (res, req) {});
+        - Want to apply middleware to a specific route? add it to that route as the second parameter!
+          Super easy and straight forward. Behind the scenes the every route param after the first should be a middleware func!
+
+    4. router.METHOD() Inline Middleware;
+        - Remember, routes are middleware, they just have a `next` property. 
+          As a result, you can use them directly here though it is not very common.
+        - ex: 
+        router.delete('/:id', (req, res, next) => {
+            const id = parseInt(req.params.id);  // Extract and parse the id from the URL parameters
+            const post = posts.find((post) => post.id === id);  // Find the post with that id
+
+            if (!post) {
+                const error = new Error(`A post with the id of ${id} was not found`);  // Create a custom error object
+                error.status = 404;  // Set the HTTP status code for the error
+                return next(error);  // Pass control to the next middleware or error handler with the error object
+            }
+
+            res.status(200).json(post);  // If the post is found, respond with it and a 200 status
+        });
+
+
+    NOTE: when using ".use", Express executes these middleware functions for every incoming 
+    request that matches the specified path. If we don’t specify a path, Express defaults 
+    the path to /, matching every incoming request.
+    
+
+
+How do I make my own middleware?? Here's an example:
+const logger = (req, res, next) => {
+    console.log(
+        `${req.method} ${req.protocol}://${req.get('host')}${req.originalUrl}`
+    );
+    next();
+};
+
+
+
+
+
+
+
+
+
+
+
+
+========================
+=========PAUSE==========
+========================
+
+Okay. We've covered almost everything to do with middleware except for one big topic. 
+Error Middleware. 
+Lets give you some background on Error Handler Middleware and then talk about 
+error handling best practices more generally in express.
+
+
+
+
+
+
+
+
+
+
+
+
+
+ERROR MIDDLEWARE:
+===============
+They are the functions responsible for handling the errors thrown by any previous Layer 
+or sent by previous Layer using next() method. They have a signature of func(error, req, res, next). 
+While defining them, it is absolutely necessary to have all four params in the signature. 
+This is the only way, app can differentiate between errorHandlers and other middlewares.
+
+
+Error Middleware Creation
+// Every thrown error in the application or the previous middleware function calling `next` with an error as an argument will eventually go to this middleware function
+function errorHandler (err, req, res, next) {
+    if (err.status) {
+        res.status(err.status).json({ msg: err.message });
+    } else {
+        res.status(500).json({ msg: err.message });
+    }
+};
+app.use(errorHandler);
+
+2. Throw an error somewhere in your route logic!
+    - at a base level if we want to throw an error for any reason we do this:
+        next(new Error(...))
+    - this will automatically forward the error to the error middleware function we defined above!
+    - Hell yeah thats kinda cool!
+
+NOTE:
+you can also use some cool tools like express-async-handler 
+to make it so you dont have to do the `next(new Error(...))` stuff on async functions!
+Just make your async call and if your promise is rejected or there is an error,
+the package automatically sends it to next(error) for you!
+
+
+
+
+
+
+
+
+
+
+
+
+
+ERROR HANDLING:
+===============
+https://expressjs.com/en/guide/error-handling.html 
+
+Here are some things to know about error handling in express:
+    1. the default express error handler
+    2. using a custom error handler
+    3. you can catch errors and pass them to the error handler with next(err) OR `throw new Error(...)`
+    4. you need to treat async code differently! (for now)
+
+
+
+
+
+1. using the default express error handler
+    - express has a default error handler that will render ***HTML*** to the user in the event of an error!
+    - this can be great and does some nice stuff but ultimately we should make our own!
+
+app.get('/', (req, res) => {
+    res.status(500).send("BROKEN");
+    // OR
+    throw new Error('BROKEN') // Express will catch this on its own.
+    // OR
+    next(new Error("BROKEN")); // pass error to default express error-handling 
+    // these all do essentially the same thing
+});
+
+
+
+2. using a custom error handler
+    - we can define an error handler middleware and errors will instead be directed to OUR handler
+    - adding a custom error handler will bypass the default handler
+    - ultimately, every thrown error in the application or the previous middleware function 
+      calling next(err) will eventually go to this middleware function
+
+app.use((err, req, res, next) => {
+    console.error(err);
+    // If you add this to the above code, you will see a `BROKEN!` in the page, with a status code of 500 that can be seen in the network tab of the dev tools
+    res.status(500).send(err.message);
+});
+
+
+
+
+3. you can catch errors and pass them to the error handler with next(err) OR `throw new Error(...)`
+    - throw new Error(...) ≈≈ next(new Error(...))      !!! SUPER COOL !!!
+    - if you see something wrong you can just throw an error!
+    - this is a great way to handle errors!
+
+app.get('/', (req, res, next) => {
+  const post = false;
+
+  if (!post) {
+    const error = new Error(`A post was not found`);
+    error.status = 404;
+    return next(error);
+
+    // OR
+
+    throw new Error(`A post was not found`);
+  }
+
+  res.status(200).json(post);
+});
+
+
+
+4. you need to treat async code differently! (for now)
+    - if you have an error in an async call you would want to catch it in a try/catch block!
+    - check out this example
+
+async function getAuthorById(req, res) {
+  const { authorId } = req.params;
+
+  try {
+    const author = await db.getAuthorById(Number(authorId));
+    if (!author) {
+      res.status(404).send("Author not found");
+      return;
+    }
+    res.send(`Author Name: ${author.name}`);
+
+  } catch (error) {
+    next(error)
+  }
+};
+
+    - makes sense right? if you look into the future a bit though you might be able to see that 
+      this isn't DRY and could easily turn into a nightmare making readability suffer!
+    - but wait! there's a solution! two actually!
+
+
+
+Try/Catch Solution!
+----------------------------------------------------------------------------
+
+    Solution #1: asyncHandler
+        - This function will automatically catch any errors thrown and call the next(err) function
+        - Eliminates the need for a bunch of try/catch blocks
+
+        npm install express-async-handler
+        const asyncHandler = require('express-async-handler');
+
+        app.get('/async-route', asyncHandler(async (req, res) => {
+            const data = await someAsyncTask();
+            res.json(data);
+        }));
+
+
+
+    Solution #2: Express 5
+        Starting with Express 5, route handlers and middleware that return a Promise 
+        will call next(value) automatically when they reject or throw an error.
+        
+        For example:
+        app.get('/user/:id', async (req, res, next) => {
+            const user = await getUserById(req.params.id)
+            res.send(user)
+        })
+
+        If getUserById throws an error or rejects, next will be called with either the 
+        thrown error or the rejected value. (If no rejected value is provided, next will 
+        be called with a default Error object provided by the Express router.)
+
+        If you pass anything to the next() function (except the string 'route'), 
+        Express regards the current request as being an error and will skip any 
+        remaining non-error handling routing and middleware functions.
+
+
+
+
+
+5. Use a custom error Class!
+    - define an new error in somewhere and just import it to use it!
+
+// errors/CustomNotFoundError.js
+
+class CustomNotFoundError extends Error {
+  constructor(message) {
+    super(message);
+    this.statusCode = 404;
+    // So the error is neat when stringified. NotFoundError: message instead of Error: message
+    this.name = "NotFoundError";
+  }
+}
+
+module.exports = CustomNotFoundError;
+
+
+
+
+
+

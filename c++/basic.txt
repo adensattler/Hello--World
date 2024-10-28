@@ -1,0 +1,29 @@
+Common Methods
+- count
+
+
+Iterators in C++
+- Iterators are objects that point to elements in containers (like arrays, vectors, lists, etc.).
+- Iterators can be compared, incremented, and dereferenced like pointers.
+
+   - `.begin()`: Returns an iterator pointing to the first element of the container.
+   - `.end()`: Returns an iterator pointing just past the last element (used as an end marker).
+   - `.find()`: Returns an iterator to element (if found) or end()
+
+1. Basic Usage:
+   ```cpp
+   #include <iostream>
+   #include <vector>
+   
+   int main() {
+       std::vector<int> v = {1, 2, 3, 4, 5};
+
+       unordered_set<int>::iterator itr;
+   
+       // Using iterators to traverse the vector
+       for (auto it = v.begin(); it != v.end(); ++it) {
+           std::cout << *it << " ";  // Dereference the iterator to access the element
+       }
+
+       return 0;
+   }

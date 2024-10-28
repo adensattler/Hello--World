@@ -1,0 +1,187 @@
+
+JavaScript DOM Manipulation Cheatsheet
+======================================
+
+1. Selecting Elements:
+----------------------
+
+- document.getElementById(id)
+    Selects an element by its ID.
+    Example: document.getElementById("myId");
+
+- document.querySelector(selector)
+    Selects the first element matching the CSS selector.
+    Example: document.querySelector(".myClass");
+
+- document.querySelectorAll(selector)
+    Selects all elements matching the CSS selector (returns a NodeList).
+    Example: document.querySelectorAll("p");
+
+- document.getElementsByClassName(className)
+    Selects elements by class name (returns an HTMLCollection).
+    Example: document.getElementsByClassName("myClass");
+
+- document.getElementsByTagName(tagName)
+    Selects elements by tag name (returns an HTMLCollection).
+    Example: document.getElementsByTagName("div");
+
+
+2. Manipulating Content:
+------------------------
+
+- element.innerHTML
+    Gets or sets the HTML content of an element.
+    Example: element.innerHTML = "<p>New content</p>";
+
+- element.textContent
+    Gets or sets the text content of an element.
+    Example: element.textContent = "New text content";
+
+- element.setAttribute(attr, value)
+    Sets an attribute on an element.
+    Example: element.setAttribute("src", "image.jpg");
+
+- element.getAttribute(attr)
+    Gets the value of an attribute.
+    Example: element.getAttribute("src");
+
+- element.removeAttribute(attr)
+    Removes an attribute from an element.
+    Example: element.removeAttribute("src");
+
+
+3. Styling Elements:
+--------------------
+
+- element.style.property
+    Directly sets a CSS property.
+    Example: element.style.color = "blue";
+
+- element.classList.add(className)
+    Adds a class to an element.
+    Example: element.classList.add("active");
+
+- element.classList.remove(className)
+    Removes a class from an element.
+    Example: element.classList.remove("active");
+
+- element.classList.toggle(className)
+    Toggles a class on or off.
+    Example: element.classList.toggle("active");
+
+- element.classList.contains(className)
+    Checks if an element has a specific class.
+    Example: element.classList.contains("active");
+
+
+4. Event Handling:
+------------------
+
+- element.addEventListener(event, handler)
+    Adds an event listener to an element.
+    Example: element.addEventListener("click", function() { alert("Clicked!"); });
+
+- element.removeEventListener(event, handler)
+    Removes an event listener from an element.
+    Example: element.removeEventListener("click", handlerFunction);
+
+- event.preventDefault()
+    Prevents the default action for an event (e.g., form submission).
+    Example: event.preventDefault();
+
+- event.stopPropagation()
+    Stops the event from propagating (bubbling) to parent elements.
+    Example: event.stopPropagation();
+
+
+5. Creating and Appending Elements:
+-----------------------------------
+
+- document.createElement(tagName)
+    Creates a new element.
+    Example: const newDiv = document.createElement("div");
+
+- parentElement.appendChild(childElement)
+    Appends a child element to a parent.
+    Example: parentElement.appendChild(newDiv);
+
+- parentElement.insertBefore(newElement, referenceElement)
+    Inserts a new element before a reference element.
+    Example: parentElement.insertBefore(newDiv, existingDiv);
+
+- element.innerHTML += content
+    Appends content to an element.
+    Example: element.innerHTML += "<p>Appended content</p>";
+
+
+6. Removing Elements:
+---------------------
+
+- element.remove()
+    Removes an element from the DOM.
+    Example: element.remove();
+
+- parentElement.removeChild(childElement)
+    Removes a child element from its parent.
+    Example: parentElement.removeChild(childElement);
+
+
+7. Traversing the DOM:
+----------------------
+
+- element.parentElement
+    Gets the parent of an element.
+    Example: let parent = element.parentElement;
+
+- element.children
+    Gets the child elements of an element (returns an HTMLCollection).
+    Example: let children = element.children;
+
+- element.firstElementChild
+    Gets the first child element.
+    Example: let firstChild = element.firstElementChild;
+
+- element.lastElementChild
+    Gets the last child element.
+    Example: let lastChild = element.lastElementChild;
+
+- element.nextElementSibling
+    Gets the next sibling element.
+    Example: let nextSibling = element.nextElementSibling;
+
+- element.previousElementSibling
+    Gets the previous sibling element.
+    Example: let prevSibling = element.previousElementSibling;
+
+
+8. Form Input Handling:
+-----------------------
+
+- element.value
+    Gets or sets the value of form elements like <input>, <textarea>, etc.
+    Example: inputElement.value = "New Value";
+
+- element.checked
+    Gets or sets the checked state of a checkbox or radio button.
+    Example: checkbox.checked = true;
+
+- element.selectedIndex
+    Gets or sets the selected index of a <select> element.
+    Example: selectElement.selectedIndex = 1;
+
+
+9. Miscellaneous:
+-----------------
+
+- document.createTextNode(text)
+    Creates a text node.
+    Example: const textNode = document.createTextNode("Hello!");
+
+- element.replaceChild(newChild, oldChild)
+    Replaces a child element with another.
+    Example: parentElement.replaceChild(newDiv, oldDiv);
+
+- element.cloneNode(deep)
+    Clones an element (deep: whether to also clone its children).
+    Example: let clone = element.cloneNode(true);
+

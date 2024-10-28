@@ -1,0 +1,29 @@
+What is React?
+React is a js library for building UIs(some say framework)! (bunch of prewritten code to make development easier)
+Makes your code more scalable, readable, and way more efficient!
+
+PUBLIC: The public folder is where all of the static assets related to your app will go. 
+This could include images, icons, and information files for the browser.
+
+SRC: Inside the src folder is where you will find the code that runs your app. 
+The main.jsx file here serves as the entry point of the application. 
+
+REACT IS DECLARATIVE! – What should be done ("just tell me what to do and ill worrry about how to get it done")
+Imperative – How should it be done? "tell me every step"
+
+
+JSX – JavaScript XML 
+basically think of it as a flavor of js that is like html
+React elements created by JSX are just js objects!
+
+
+Elements:
+the objects that get created when we return JSX
+
+
+Component:
+A function that returns React elements (ie jsx)
+
+Fragment:
+allows you to return multiple elements from a React component by allowing you to group a list of children without adding extra nodes to the DOM.
+<> </>

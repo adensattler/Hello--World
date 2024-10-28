@@ -1,0 +1,104 @@
+CONTROLLERS:
+============
+Okay so you know how we have our routes right? They look something like this:
+app.get("/", (req, res) => {
+    console.log("Hello, World!");
+    res.end();
+});
+
+Now eventually we'll have a `routes` file that holds all our routes so we know where they all are.
+Sweet! But lets say our app grows... Instead of the above route being two lines of code,
+It turns into 200... and instead of one route we have 40... That sounds like a nightmare... 
+I'd pull my hair out trying to read the routes file or understand what routes are even available.
+
+What is the solution? 
+
+CONTROLLERS
+Controllers move route logic into separate functions. Plain and simple.
+This keeps the route definitions clean and focused on just defining the endpoints, 
+while the controller functions handle what needs to happen when those routes are accessed.
+
+Why? Because this structure improves code organization, readability, reusability, and maintainability.
+
+Here is an example of a controller file and its connected routes file:
+
+//postController.js
+// ----------------------------
+// @desc   Get all posts
+// @route  GET /api/posts
+export function getPosts (req, res, next) {
+  const limit = parseInt(req.query.limit);
+
+  if (!isNaN(limit) && limit > 0) {
+    return res.status(200).json(posts.slice(0, limit));
+  }
+
+  res.status(200).json(posts);
+};
+
+// @desc    Get single post
+// @route   GET /api/posts/:id
+export const getPost = (req, res, next) => {
+  const id = parseInt(req.params.id);
+  const post = posts.find((post) => post.id === id);
+
+  if (!post) {
+    const error = new Error(`A post with the id of ${id} was not found`);
+    error.status = 404;
+    return next(error);
+  }
+
+  res.status(200).json(post);
+};
+
+
+// routes.js
+// ----------------------------
+import express from 'express';
+import {
+  getPosts,
+  getPost,
+  createPost,
+  updatePost,
+  deletePost,
+} from '../controllers/postController.js';
+const router = express.Router();
+
+// Get all posts
+router.get('/', getPosts);
+
+// Get single post
+router.get('/:id', getPost);
+
+// Create new post
+router.post('/', createPost);
+
+// Update Post
+router.put('/:id', updatePost);
+
+// Delete Post
+router.delete('/:id', deletePost);
+
+export default router;
+
+
+
+
+
+
+NOTE: ON DEFINING CONTROLLERS
+
+As far as i can tell there are two main ways people define controllers:
+    1. as a VARIABLE: 
+        export const getPost = (req, res, next) => {};
+
+    2. as a FUNCTION: 
+        export function getPost (req, res, next) {};
+
+I think the function is the most logical HOWEVER the variable approach is more practical.
+By storing the function in a variable, you can more easily refactor or extend the functionality later. 
+For example, you could potentially change the logic of the function or 
+add middleware around it without modifying the export structure. (eg, unsing asyncHandler!!!!)
+
+  
+
